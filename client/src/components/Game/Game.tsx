@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { Unity, useUnityContext } from 'react-unity-webgl';
-import classes from './Game.module.css';
 import { styled } from 'styled-components';
-import {Button, Container} from '@mantine/core';
+import { Button } from '@mantine/core';
 
 const GameContainer = styled.div`
   position: relative;
@@ -36,11 +35,11 @@ export const Game = ({ setIsGameLoaded }: Props) => {
 
         if (elem) {
             if (elem.requestFullscreen) {
+                // eslint-disable-next-line no-void
                 void elem.requestFullscreen();
-            } else {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error
-                if (elem.webkitRequestFullscreen) { /* Safari */
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     elem.webkitRequestFullscreen();
@@ -50,8 +49,7 @@ export const Game = ({ setIsGameLoaded }: Props) => {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     elem.msRequestFullscreen();
-                }
-                else {
+                } else {
                     // For iOS Safari, fallback to making the container fill the screen.
                     elem.style.position = 'fixed';
                     elem.style.top = '0';
@@ -60,7 +58,6 @@ export const Game = ({ setIsGameLoaded }: Props) => {
                     elem.style.height = '100vh';
                     elem.style.zIndex = '9999';
                 }
-            }
         }
     };
 
@@ -68,15 +65,15 @@ export const Game = ({ setIsGameLoaded }: Props) => {
         <CenteredContainer>
             <GameContainer>
                 <Unity
-                    id={'unity-container'}
-                    style={{
+                  id="unity-container"
+                  style={{
                         borderRadius: '15px',
                         width: '100%',
                         height: '100%',
                     }}
-                    unityProvider={unityProvider}
+                  unityProvider={unityProvider}
                 />
-                <Button onClick={openFullscreen}/>
+                <Button onClick={openFullscreen} />
             </GameContainer>
         </CenteredContainer>
     );

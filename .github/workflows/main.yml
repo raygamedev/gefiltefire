@@ -1,0 +1,143 @@
+name: Raydevs
+
+on: [ push ]
+
+jobs:
+  build:
+    name: Build Gefilte Fitre Game
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      # Cache
+      - uses: actions/cache@v2
+        with:
+          path: game/Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 2022.3.41f1
+          projectPath: game
+          targetPlatform: WebGL
+
+      # Output
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build
+          path: build
+
+  test:
+    name: Test React client loads Raydevs game
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # Use the version of Node.js that your project uses
+
+      - name: Download Gefilte game
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+          path: build
+
+      - name: Extract Build Artifact
+        run: |
+          mkdir -p client/public/build
+          mv build/WebGL/WebGL/Build/* client/public/build/
+
+      - name: Install dependencies
+        run: |
+          npm ci
+        working-directory: client
+
+      - name: Start server
+        run: npm start & npx wait-on http://127.0.0.1:3000
+        working-directory: client
+
+      - name: Run tests
+        run: npm test
+        working-directory: client
+
+
+  build-docker:
+    name: build raydevs.com docker image
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download Build
+        uses: actions/download-artifact@v2
+        with:
+          name: Build
+          path: build
+
+      - name: Extract Build Artifact
+        run: |
+          mkdir -p client/public/build
+          mv build/WebGL/WebGL/Build/* client/public/build/
+
+      - name: Clean up
+        run: |
+          rm -rf build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/gefiltefire:latest
+  deploy:
+    name: Deploy Raydevs
+    needs: [ build-docker ]
+    #needs: [ build-docker, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Fake deploy
+        run: |
+          echo "Deploying to production..."
+
+
+#      - name: Build the Docker image
+#        run: docker build . --file Dockerfile --tag
+#
+#      - name: Run the Docker container
+#        run: docker run -d --name my-container my-image
+#
+#      - name: Execute commands inside Docker container
+#        run: docker exec my-container some-command

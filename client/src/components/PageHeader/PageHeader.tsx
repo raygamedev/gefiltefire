@@ -7,7 +7,7 @@ const links = [
     { link: '/about', label: 'Features' },
     { link: '/pricing', label: 'Pricing' },
     { link: '/learn', label: 'Learn' },
-    { link: '/community', label: 'Community' },
+    { link: 'https://github.com/raygamedev/gefiltefire', label: 'GitHub' },
 ];
 
 export function PageHeader() {
@@ -16,13 +16,14 @@ export function PageHeader() {
 
     const items = links.map((link) => (
         <a
-            key={link.label}
-            href={link.link}
-            className={classes.link}
-            data-active={active === link.link || undefined}
-            onClick={(event) => {
-                event.preventDefault();
-                setActive(link.link);
+          key={link.label}
+          href={link.link}
+          className={classes.link}
+          data-active={active === link.link || undefined}
+          onClick={(event) => {
+              event.preventDefault();
+              // open link in a new tab
+                window.open(link.link, '_blank');
             }}
         >
             {link.label}
