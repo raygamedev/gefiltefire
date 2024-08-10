@@ -1,0 +1,8 @@
+/* ColorSchemeToggle.css */
+:root {
+  --transition-duration: 1s;
+}
+
+body {
+  transition: background-color var(--transition-duration), color var(--transition-duration);
+}
