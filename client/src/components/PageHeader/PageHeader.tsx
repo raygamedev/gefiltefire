@@ -1,7 +1,13 @@
-import { useState } from 'react';
-import { Container, Group, Burger } from '@mantine/core';
+import { Container, Group, Burger, rem, useMantineColorScheme, useComputedColorScheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import {
+    IconBrandGithub,
+    IconBrandLinkedin,
+    IconFileDescription, IconMoon,
+} from '@tabler/icons-react';
 import classes from './PageHeader.module.css';
+import { ActionToggle } from '@/components/PageHeader/ColorSchemeToggle/ColorSchemeToggle';
+import TopBarButton from '@/components/PageHeader/TopBarButton';
 
 const links = [
     { link: '/about', label: 'Features' },
@@ -12,30 +18,21 @@ const links = [
 
 export function PageHeader() {
     const [opened, { toggle }] = useDisclosure(false);
-    const [active, setActive] = useState(links[0].link);
-
-    const items = links.map((link) => (
-        <a
-          key={link.label}
-          href={link.link}
-          className={classes.link}
-          data-active={active === link.link || undefined}
-          onClick={(event) => {
-              event.preventDefault();
-              // open link in a new tab
-                window.open(link.link, '_blank');
-            }}
-        >
-            {link.label}
-        </a>
-    ));
-
+    const { setColorScheme } = useMantineColorScheme();
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     return (
         <header className={classes.header}>
             <Container size="md" className={classes.inner}>
                 <div> Logo should be here </div>
                 <Group gap={5} visibleFrom="xs">
-                    {items}
+                    <TopBarButton text="GitHub" icon={<IconBrandGithub size={25} />} color="gray" isMobile={false} />
+                    <TopBarButton
+                      onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
+                      text=""
+                      icon={<IconMoon />}
+                      color="gray"
+                      isMobile={false} />
+                    <ActionToggle />
                 </Group>
 
                 <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
