@@ -30,8 +30,8 @@ namespace Gefilte
         private void LaunchRocket()
         {
             float randomAngle = Random.Range(randomAngleMin, randomAngleMax);
-            Quaternion rotation = Quaternion.Euler(0, randomAngle, 0);
-            GameObject rocket = Instantiate(rocketPrefab, transform.position, rotation);
+            Quaternion randomRotation = Quaternion.Euler(0, 0, -1 * randomAngle);
+            GameObject rocket = Instantiate(rocketPrefab, transform.position, randomRotation);
             rocket.GetComponent<Rocket>().Launch();
         }
     }

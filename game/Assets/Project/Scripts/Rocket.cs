@@ -6,6 +6,7 @@ namespace Gefilte
     using UnityEngine;
     public class Rocket : MonoBehaviour
     {
+        [SerializeField] GameObject explosionPrefab;
         private Rigidbody2D _rigidbody;
 
         private void Awake()
@@ -23,7 +24,9 @@ namespace Gefilte
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("Rocket hit something!");
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Destroy(explosion, 0.7f);
+            Destroy(gameObject);
         }
     }
 }

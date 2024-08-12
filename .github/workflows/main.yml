@@ -120,27 +120,27 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/gefiltefire:latest
 
-  deploy:
-    name: Deploy GefilteFire
-    needs: [ build-docker ]
-    #needs: [ build-docker, test ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Deploy to AWS server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_SSH_KEY }}
-          script: |
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            sudo su -
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+#  deploy:
+#    name: Deploy GefilteFire
+#    needs: [ build-docker ]
+#    #needs: [ build-docker, test ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Deploy to AWS server
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.AWS_HOST }}
+#          username: ${{ secrets.AWS_USERNAME }}
+#          key: ${{ secrets.AWS_SSH_KEY }}
+#          script: |
+#            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+#            sudo su -
+#            docker-compose down
+#            docker-compose pull
+#            docker-compose up -d
 
 
 #      - name: Build the Docker image
