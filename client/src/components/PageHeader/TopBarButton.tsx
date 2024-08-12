@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core';
+import { Button, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 
 interface TopBarButtonProps {
@@ -17,6 +17,7 @@ const TopBarButton = ({
   isMobile,
   onClick,
 }: TopBarButtonProps) => isMobile ? (
+
     <Button
       component="a"
       target="_blank"
@@ -35,6 +36,7 @@ const TopBarButton = ({
       href={link}
       color={color}
       leftSection={icon}
+
       >
       {text}
     </Button>
