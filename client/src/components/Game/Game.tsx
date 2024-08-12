@@ -21,10 +21,10 @@ interface Props {
 
 export const Game = ({ setIsGameLoaded }: Props) => {
     const { unityProvider, isLoaded } = useUnityContext({
-        loaderUrl: 'build/test.loader.js',
-        dataUrl: 'build/test.data',
-        frameworkUrl: 'build/test.framework.js',
-        codeUrl: 'build/test.wasm',
+        loaderUrl: 'build/build.loader.js',
+        dataUrl: 'build/build.data',
+        frameworkUrl: 'build/build.framework.js',
+        codeUrl: 'build/build.wasm',
     });
 
     useEffect(() => {

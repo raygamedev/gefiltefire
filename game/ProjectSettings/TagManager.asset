@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 3874518065
+    locked: 0
+  - name: Buildings
+    uniqueID: 151912545
+    locked: 0
+  - name: Rockets
+    uniqueID: 2066747699
+    locked: 0
