@@ -77,6 +77,10 @@ jobs:
         with:
           project_id: gefiltefire
           
+          
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+      
       - name: Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2

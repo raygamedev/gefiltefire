@@ -6,6 +6,8 @@ jobs:
   build:
     name: Build Gefilte Fitre Game
     runs-on: ubuntu-latest
+    env: 
+      IMAGE_TAG: "us-central1-docker.pkg.dev/gefiltefire/gefilte/gefiltefire:latest"
     steps:
       # Checkout
       - name: Checkout repository
@@ -39,46 +41,8 @@ jobs:
           name: Build
           path: build
 
-#  test:
-#    name: Test React client loads Raydevs game
-#    runs-on: ubuntu-latest
-#    needs: build
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: Set up Node.js
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '18' # Use the version of Node.js that your project uses
-#
-#      - name: Download Gefilte game
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: Build
-#          path: build
-#
-#      - name: Extract Build Artifact
-#        run: |
-#          mkdir -p client/public/build
-#          mv build/WebGL/WebGL/Build/* client/public/build/
-#
-#      - name: Install dependencies
-#        run: |
-#          npm ci
-#        working-directory: client
-#
-#      - name: Start server
-#        run: npm start & npx wait-on http://127.0.0.1:3000
-#        working-directory: client
-#
-#      - name: Run tests
-#        run: npm test
-#        working-directory: client
-#
-
   build-docker:
-    name: build raydevs.com docker image
+    name: build gefiltefire.com docker image
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -106,13 +70,13 @@ jobs:
           install: true  # Ensure Buildx is installed
           driver-opts: image=moby/buildkit:master  # Use the latest version for better platform support
 
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          project_id: gefiltefire
+
+      - name: Configure Docker
+        run:  gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -121,38 +85,13 @@ jobs:
           file: ./Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64  # Specify the platforms to build
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/gefiltefire:latest
+          tags: ${{ env.IMAGE_TAG }}
 
-#  deploy:
-#    name: Deploy GefilteFire
-#    needs: [ build-docker ]
-#    #needs: [ build-docker, test ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: Deploy to AWS server
-#        uses: appleboy/ssh-action@v1.0.3
-#        with:
-#          host: ${{ secrets.AWS_HOST }}
-#          username: ${{ secrets.AWS_USERNAME }}
-#          key: ${{ secrets.AWS_SSH_KEY }}
-#          script: |
-#            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-#            sudo su -
-#            docker-compose down
-#            docker-compose pull
-#            docker-compose up -d
-
-
-#      - name: Build the Docker image
-#        run: docker build . --file Dockerfile --tag
-#
-#      - name: Run the Docker container
-#        run: docker run -d --name my-container my-image
-#
-#      - name: Execute commands inside Docker container
-#        run: docker exec my-container some-command
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: gefilte-docker
+          region: us-central1
+          image: ${{ env.IMAGE_TAG }}
