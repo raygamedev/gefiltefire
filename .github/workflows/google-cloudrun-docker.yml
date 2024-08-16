@@ -79,11 +79,11 @@ jobs:
 
       - name: Deploy to Google Cloud Run
         run: |
-          gcloud run deploy YOUR_SERVICE_NAME \
-          --image ghcr.io/YOUR_GITHUB_USERNAME/YOUR_IMAGE_NAME:latest \
-          --platform managed \
-          --region YOUR_REGION \
-          --allow-unauthenticated
+          gcloud run deploy gefilte-docker \
+            --image=ghcr.io/raygamedev/gefiltefire:latest \
+            --region=us-central1 \
+            --project=gefiltefire \
+            && gcloud run services update-traffic gefilte-docker --to-latest
           
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
