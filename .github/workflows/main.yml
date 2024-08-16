@@ -1,6 +1,6 @@
 name: Raydevs
 
-#on: [ push ]
+on: [ push ]
 
 jobs:
   build:
