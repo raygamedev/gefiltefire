@@ -71,6 +71,11 @@ jobs:
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: gefiltefire
 
       # NOTE: Alternative option - authentication via credentials json
       # - name: Google Auth
