@@ -92,7 +92,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
-          tags: ${{ env.IMAGE_TAG }}
+          tags: "us-central1-docker.pkg.dev/gefiltefire/gefilte/gefiltefire:latest"
 
       - name: Deploy to Cloud Run
         id: deploy
