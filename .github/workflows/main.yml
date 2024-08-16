@@ -100,4 +100,4 @@ jobs:
         with:
           service: gefilte-docker
           region: us-central1
-          image: ${{ env.IMAGE_TAG }}
+          image: "us-central1-docker.pkg.dev/gefiltefire/gefilte/gefiltefire:latest"
